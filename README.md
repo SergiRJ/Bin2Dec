@@ -2,7 +2,7 @@
 
 Página web interactiva para que el alumnado de **Computación y Robótica en la ESO** comprenda el paso de **binario a decimal** y de **decimal a binario**. Funciona en el navegador, sin instalar nada y sin recoger ningún dato de los alumnos.
 
-🔗 **Pruébala aquí:** [ENLACE A LA PÁGINA]
+🔗 **Pruébala aquí:** [[ENLACE A LA PÁGINA](https://sergirj.github.io/Bin2Dec/)]
 
 ## ¿Qué incluye?
 
@@ -36,5 +36,14 @@ El proyecto es un único archivo, `index.html`, sin dependencias externas. Para 
 
 ## Autoría y licencia
 
-Creado por [TU NOMBRE] para uso educativo.
-Licencia: [elige una, por ejemplo CC BY-SA 4.0 para materiales educativos, o MIT para el código].
+Creado por Sergio Ruiz para uso educativo.
+Shield: [![CC BY-NC-SA 4.0][cc-by-nc-sa-shield]][cc-by-nc-sa]
+
+Esta obra está bajo una
+[Licencia Creative Commons Atribución-NoComercial-CompartirIgual 4.0 Internacional][cc-by-nc-sa].
+
+[![CC BY-NC-SA 4.0][cc-by-nc-sa-image]][cc-by-nc-sa]
+
+[cc-by-nc-sa]: https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es
+[cc-by-nc-sa-image]: https://licensebuttons.net/l/by-nc-sa/4.0/88x31.png
+[cc-by-nc-sa-shield]: https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg
