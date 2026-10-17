@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Binario y decimal: aprende jugando</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--bg:#f3f6fb;--card:#fff;--ink:#16213a;--mut:#5a6683;--line:#d5dcea;--on:#1f9d6b;--onbg:#d9f4e8;--off:#9aa6bf;--acc:#2f5bea;--accbg:#e3eaff;--warn:#d9480f;--warnbg:#ffe9dd}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1524;--card:#18203a;--ink:#e8edfb;--mut:#9eabc9;--line:#2d3858;--on:#4fe0a2;--onbg:#12392c;--off:#5d6a8c;--acc:#7a9bff;--accbg:#1e2b57;--warn:#ff9760;--warnbg:#47261a}}
+:root[data-theme="dark"]{--bg:#0f1524;--card:#18203a;--ink:#e8edfb;--mut:#9eabc9;--line:#2d3858;--on:#4fe0a2;--onbg:#12392c;--off:#5d6a8c;--acc:#7a9bff;--accbg:#1e2b57;--warn:#ff9760;--warnbg:#47261a}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:17px/1.55 "Trebuchet MS","Segoe UI",system-ui,sans-serif}
+main{max-width:860px;margin:0 auto;padding:16px}
+h1{font-size:1.8rem;margin:.2em 0}h2{font-size:1.3rem;margin:0 0 .4em}
+.sub{color:var(--mut);margin:0 0 12px}
+nav{display:flex;gap:6px;flex-wrap:wrap;margin:12px 0}
+nav button,.btn{font:inherit;border:2px solid var(--line);background:var(--card);color:var(--ink);padding:8px 14px;border-radius:10px;cursor:pointer}
+nav button[aria-selected=true],.btn.p{background:var(--acc);border-color:var(--acc);color:#fff}
+button:focus-visible,input:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+section{display:none;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:16px}
+section.on{display:block}
+.sw{display:flex;gap:6px;justify-content:center;flex-wrap:nowrap;margin:14px 0}
+.bit{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;max-width:84px;min-width:0}
+.bit .w{font-weight:700;font-size:1.05rem}.bit .e{font-size:.75rem;color:var(--mut)}
+.tog{width:100%;max-width:56px;height:84px;border-radius:28px;border:3px solid var(--off);background:var(--bg);position:relative;cursor:pointer;padding:0}
+.tog::after{content:"";position:absolute;left:50%;transform:translateX(-50%);bottom:6px;width:70%;aspect-ratio:1;border-radius:50%;background:var(--off);transition:all .2s}
+.tog[aria-pressed=true]{border-color:var(--on);background:var(--onbg)}
+.tog[aria-pressed=true]::after{bottom:calc(100% - 6px - 70%*1);background:var(--on);top:6px;bottom:auto}
+.tog[aria-pressed=true]::after{top:6px}
+.bv{font:700 1.5rem monospace}
+.res{background:var(--accbg);border-radius:12px;padding:12px 14px;margin-top:8px}
+.big{font:700 2.2rem monospace;color:var(--acc)}
+.mono{font-family:monospace}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:8px 0}
+input[type=number]{font:inherit;width:110px;padding:8px;border:2px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink)}
+.steps{list-style:none;padding:0;margin:10px 0}
+.steps li{padding:8px 12px;border-left:5px solid var(--acc);background:var(--bg);border-radius:6px;margin:6px 0}
+.steps li.hit{border-color:var(--on)}.steps li.miss{border-color:var(--off)}
+.r{color:var(--warn);font-weight:700}.u{color:var(--on);font-weight:700}
+.tip{background:var(--warnbg);border-radius:10px;padding:10px 12px;margin:10px 0}
+.ok{color:var(--on);font-weight:700}.ko{color:var(--warn);font-weight:700}
+details{margin:8px 0}summary{cursor:pointer;font-weight:700}
+.seg{display:inline-flex;gap:6px}
+@media (prefers-reduced-motion:reduce){.tog::after{transition:none}}
+.paper{display:grid;gap:2px 0;font:700 1.35rem monospace;margin:10px 0;overflow-x:auto;padding:6px 4px;justify-content:start}
+.paper span{min-width:2.6ch;padding:2px 8px;text-align:center}
+.dv{border-left:3px solid var(--ink);border-bottom:3px solid var(--ink)}
+.rm{color:var(--warn)}.fq{color:var(--on);text-decoration:underline}
+.vs{font:700 1.2rem monospace;display:inline-block;text-align:right;margin:4px 12px;vertical-align:top}
+.vs hr{border:0;border-top:2px solid var(--ink);margin:2px 0}
+.pw{border-collapse:collapse;margin:10px 0;font-family:monospace}
+.pw td,.pw th{border:2px solid var(--line);padding:6px 10px;text-align:center}
+.pw .h{background:var(--accbg)}
+.sheet h3{margin:.8em 0 .3em}.ex{display:inline-block;width:48%;min-height:64px;vertical-align:top;border-bottom:1px dotted var(--line);margin:4px 0}
+.timer{font:700 1.3rem monospace;color:var(--warn)}
+@media print{body>main>*:not(#t6){display:none!important}#t6{display:block!important;border:0;padding:0}.ctl{display:none!important}body{background:#fff;color:#000}:root{--ink:#000;--line:#999;--card:#fff;--bg:#fff;--accbg:#e8e8e8}}
+</style>
+</head>
+<body>
+<main>
+<h1>Binario y decimal</h1>
+<p class="sub">Los ordenadores solo entienden dos símbolos: 0 (apagado) y 1 (encendido). Aquí aprenderás a traducir entre su idioma y el nuestro.</p>
+<div class="row"><span>Tamaño:</span>
+<span class="seg" role="group" aria-label="Número de bits">
+<button class="btn" id="b4">4 bits (0–15)</button><button class="btn p" id="b8">8 bits (0–255)</button></span></div>
+<nav role="tablist">
+<button role="tab" data-t="t1" aria-selected="true">1. Interruptores</button>
+<button role="tab" data-t="t2" aria-selected="false">2. Binario → decimal</button>
+<button role="tab" data-t="t3" aria-selected="false">3. Decimal → binario</button>
+<button role="tab" data-t="t4" aria-selected="false">4. Practica</button>
+<button role="tab" data-t="t5" aria-selected="false">5. Tabla de potencias</button>
+<button role="tab" data-t="t6" aria-selected="false">6. Ficha imprimible</button>
+</nav>
+
+<section id="t1" class="on">
+<h2>Juega con los interruptores</h2>
+<p>Cada interruptor es un <b>bit</b>. Encendido vale 1 y apagado vale 0. Encima de cada uno ves cuánto vale esa posición: cada una vale el <b>doble</b> que la de su derecha.</p>
+<div id="sw1" class="sw"></div>
+<div class="res"><div>Número binario: <span class="bv" id="bin1"></span></div>
+<div>Suma: <span class="mono" id="sum1"></span></div>
+<div>En decimal: <span class="big" id="dec1">0</span></div></div>
+<div class="tip">Fíjate: los ceros a la izquierda <b>no valen nada</b>. 00101 es lo mismo que 101, y por eso el resultado se escribe sin ellos.</div>
+<div class="row"><button class="btn" id="clr">Apagar todos</button><button class="btn" id="all">Encender todos</button></div>
+<p><b>Reto:</b> ¿Puedes conseguir el 13? ¿Y el 100? ¿Cuál es el número más grande que puedes formar?</p>
+</section>
+
+<section id="t2">
+<h2>De binario a decimal</h2>
+<p>Solo hay un método: <b>sumar el valor de las posiciones que están en 1</b>.</p>
+<ol>
+<li>Escribe el valor de cada posición debajo de cada bit, de derecha a izquierda: 1, 2, 4, 8, 16… (siempre el doble).</li>
+<li>Tacha las posiciones que tengan un 0.</li>
+<li>Suma las que quedan.</li>
+</ol>
+<p>Ejemplo con <span class="mono">1011</span>: valen 8, 4, 2, 1 → el 4 se tacha → <span class="mono">8 + 2 + 1 = 11</span>.</p>
+<p><b>Pruébalo tú:</b> pulsa los interruptores y mira cómo se construye la suma.</p>
+<div id="sw2" class="sw"></div>
+<div class="res"><div>Binario: <span class="bv" id="bin2"></span></div>
+<div>Suma: <span class="mono" id="sum2"></span></div>
+<div>Resultado: <span class="big" id="dec2">0</span></div></div>
+</section>
+
+<section id="t3">
+<h2>De decimal a binario</h2>
+<div class="row"><label for="num">Número:</label><input id="num" type="number" min="0" value="37">
+<span class="seg" role="group" aria-label="Método"><button class="btn p" id="mDiv">Método de la división</button><button class="btn" id="mRes">Método de la resta</button></span></div>
+<div id="how"></div>
+<div id="draw"></div><ul class="steps" id="steps"></ul>
+<div class="row"><button class="btn p" id="next">Siguiente paso</button><button class="btn" id="showall">Ver todo</button><button class="btn" id="reset">Empezar de nuevo</button></div>
+<div id="final"></div>
+</section>
+
+<section id="t4">
+<h2>Practica</h2>
+<div class="row"><span class="seg"><button class="btn p" id="pA">Decimal → binario</button><button class="btn" id="pB">Binario → decimal</button></span><button class="btn" id="newq">Nuevo reto</button><button class="btn" id="timeBtn">⏱ Contrarreloj 60 s</button><span class="timer" id="clock"></span></div>
+<div id="qa">
+<p>Enciende los interruptores para formar el número <span class="big" id="target"></span></p>
+<div id="sw3" class="sw"></div>
+<div class="row"><button class="btn p" id="chkA">Comprobar</button></div>
+</div>
+<div id="qb" hidden>
+<p>¿Qué número decimal es este?</p>
+<div class="bv" id="given" style="font-size:2.2rem"></div>
+<div class="row"><input id="ans" type="number" min="0" aria-label="Tu respuesta"><button class="btn p" id="chkB">Comprobar</button></div>
+</div>
+<p id="fb" aria-live="polite"></p>
+<p>Aciertos: <b id="score">0</b> de <b id="tot">0</b></p>
+</section>
+<section id="t5"><h2>Tabla de potencias de 2</h2><p>Cada posición vale el doble que la anterior. Si te las sabes de memoria, todo es mucho más rápido.</p><div id="ptab"></div><div class="tip">Truco: para pasar a la siguiente, duplica: 1, 2, 4, 8, 16, 32, 64, 128… Con 4 bits basta saber hasta el 8; con 8 bits, hasta el 128.</div></section>
+<section id="t6" class="sheet"><div class="ctl"><h2>Ficha imprimible</h2><p>Genera ejercicios nuevos al azar con el tamaño elegido (4 u 8 bits) e imprímelos con el botón o con Ctrl+P. Marca «Mostrar soluciones» para sacar la hoja de respuestas.</p><div class="row"><button class="btn p" id="gen">Generar ficha nueva</button><button class="btn" id="prt">Imprimir</button><label><input type="checkbox" id="sol"> Mostrar soluciones</label></div></div><div id="sheet"></div></section>
+</main>
+<script>
+let N=8;
+const $=id=>document.getElementById(id);
+const pow=i=>Math.pow(2,i);
+function mkSwitches(el,onChange){
+  const o={bits:[],set(v){for(let i=0;i<N;i++)o.bits[i]=(v>>(N-1-i))&1;draw()},get(){return o.bits.reduce((a,b,i)=>a+b*pow(N-1-i),0)},reset(){o.bits=Array(N).fill(0);draw()}};
+  function draw(){
+    el.innerHTML="";
+    for(let i=0;i<N;i++){
+      const p=N-1-i,d=document.createElement("div");d.className="bit";
+      d.innerHTML=`<span class="w">${pow(p)}</span><span class="e">2<sup>${p}</sup></span>`;
+      const b=document.createElement("button");b.className="tog";b.setAttribute("aria-pressed",o.bits[i]==1);
+      b.setAttribute("aria-label",`Bit de valor ${pow(p)}`);
+      b.onclick=()=>{o.bits[i]^=1;draw()};
+      const v=document.createElement("span");v.className="bv";v.textContent=o.bits[i];
+      d.append(b,v);el.append(d);
+    }
+    onChange&&onChange(o);
+  }
+  o.reset();return o;
+}
+function sumText(o){
+  const parts=[];o.bits.forEach((b,i)=>{if(b)parts.push(pow(N-1-i))});
+  return parts.length?parts.join(" + ")+" = "+o.get():"0";
+}
+function show(o,bin,sum,dec){
+  $(bin).textContent=o.bits.join("").replace(/^0+(?=.)/,"");$(sum).textContent=sumText(o);$(dec).textContent=o.get();
+}
+let s1,s2,s3;
+function build(){
+  s1=mkSwitches($("sw1"),o=>show(o,"bin1","sum1","dec1"));
+  s2=mkSwitches($("sw2"),o=>show(o,"bin2","sum2","dec2"));
+  s3=mkSwitches($("sw3"));
+  $("num").max=pow(N)-1;if(+$("num").value>pow(N)-1)$("num").value=pow(N)-1;
+  buildSteps();newQ();pTab();genSheet();
+}
+$("clr").onclick=()=>s1.reset();$("all").onclick=()=>s1.set(pow(N)-1);
+$("b4").onclick=()=>{N=4;$("b4").classList.add("p");$("b8").classList.remove("p");build()};
+$("b8").onclick=()=>{N=8;$("b8").classList.add("p");$("b4").classList.remove("p");build()};
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll("nav button").forEach(x=>x.setAttribute("aria-selected",x==b));
+  document.querySelectorAll("section").forEach(s=>s.classList.toggle("on",s.id==b.dataset.t));
+});
+
+/* Tab 3 */
+let method="div",steps=[],shown=0,res="";
+function clampNum(){let n=Math.floor(+$("num").value);if(isNaN(n)||n<0)n=0;if(n>pow(N)-1)n=pow(N)-1;return n}
+function buildSteps(){
+  const n0=clampNum();$("num").value=n0;steps=[];shown=0;
+  
+  if(method=="div"){
+    $("how").innerHTML=`<p><b>Método de la división:</b> divide entre 2 una y otra vez y apunta el <span class="r">resto</span> de cada división. Para en cuanto el cociente sea <b>menor que 2</b> (es decir, 0 o 1): ese último cociente es el primer bit. Después lee los restos <b>de abajo hacia arriba</b>.</p>`;
+    let n=n0,rem=[];dv=[];
+    if(n<2)steps.push(`${n} es menor que 2: no hace falta dividir. Se escribe directamente <span class="u">${n}</span>`);
+    while(n>=2){const q=Math.floor(n/2),r=n%2;rem.push(r);dv.push([n,r,q]);steps.push(`${n} ÷ 2 = ${q}, <span class="r">resto ${r}</span>`+(q<2?` → el cociente ${q} es menor que 2: <b>fin de la división</b>`:""));n=q}
+    res=n+rem.slice().reverse().join("");
+    if(rem.length)steps.push(`Leemos: primero el último cociente (<span class="u">${n}</span>) y luego los restos de abajo hacia arriba (<span class="r">${rem.slice().reverse().join("")}</span>) → <b>${res}</b>`);
+  }else{
+    $("how").innerHTML=`<p><b>Método de la resta:</b> recorre las potencias de 2 de mayor a menor. Si el valor <b>cabe</b> en lo que te queda, pon <span class="u">1</span> y réstalo. Si no cabe, pon <span class="r">0</span>. Empezamos por la mayor potencia que cabe en el número: las más grandes solo darían ceros a la izquierda, que no valen nada.</p>`;
+    let n=n0,out="";sb=[];let top=0;while(pow(top+1)<=n0)top++;
+    for(let p=top;p>=0;p--){
+      const v=pow(p);
+      if(n>=v){steps.push(`<span class="mono">${v}</span> cabe en ${n} → bit <span class="u">1</span>. Resto: ${n} − ${v} = ${n-v}`);sb.push([n,v,steps.length-1]);n-=v;out+="1"}
+      else{steps.push(`<span class="mono">${v}</span> no cabe en ${n} → bit <span class="r">0</span>. Me sigue quedando ${n}`);out+="0"}
+    }
+    res=out;steps.push(`Juntamos los bits en orden: <span class="u">${out}</span>`);
+  }
+  paint();
+}
+function paint(){
+  $("steps").innerHTML=steps.slice(0,shown).map(s=>`<li>${s}</li>`).join("");
+  const done=shown>=steps.length;
+  $("next").disabled=done;$("draw").innerHTML=drawPaper();
+  $("final").innerHTML=done?`<div class="res"><span class="mono">${$("num").value}</span> en binario es <span class="big">${res}</span>
+  <div class="row"><button class="btn" id="seeSw">Verlo en los interruptores</button></div>
+  <div class="tip">Sin ceros a la izquierda: no valen nada, así que no se escriben (00${res} sería lo mismo que ${res}). Comprueba: suma las posiciones en 1 y debe darte ${$("num").value}.</div></div>`:"";
+  if(done)$("seeSw").onclick=()=>{s1.set(parseInt(res,2));document.querySelector('[data-t=t1]').click();scrollTo(0,0)};
+}
+$("next").onclick=()=>{if(shown<steps.length)shown++;paint()};
+$("showall").onclick=()=>{shown=steps.length;paint()};
+$("reset").onclick=()=>{shown=0;paint()};
+$("num").oninput=buildSteps;
+$("mDiv").onclick=()=>{method="div";$("mDiv").classList.add("p");$("mRes").classList.remove("p");buildSteps()};
+$("mRes").onclick=()=>{method="res";$("mRes").classList.add("p");$("mDiv").classList.remove("p");buildSteps()};
+
+/* Tab 4 */
+let mode="A",target=0,score=0,tot=0,answered=false;
+function newQ(){
+  target=1+Math.floor(Math.random()*(pow(N)-1));answered=false;$("fb").textContent="";
+  $("qa").hidden=mode!="A";$("qb").hidden=mode!="B";
+  if(mode=="A"){$("target").textContent=target;s3.reset()}
+  else{$("given").textContent=target.toString(2);$("ans").value=""}
+}
+function grade(ok){
+  if(timed){if(ok){tScore++;setTimeout(newQ,350)}else tFail++}else if(!answered){tot++;if(ok)score++;answered=true}
+  $("score").textContent=score;$("tot").textContent=tot;updClock();
+}
+$("chkA").onclick=()=>{const v=s3.get(),ok=v==target;grade(ok);
+  $("fb").innerHTML=ok?`<span class="ok">¡Correcto!${timed?"":" Pulsa «Nuevo reto»."}</span>`:`<span class="ko">Ahora mismo tienes ${v}. Ajusta los interruptores.</span>`};
+$("chkB").onclick=()=>{const ok=+$("ans").value==target&&$("ans").value!=="";grade(ok);
+  $("fb").innerHTML=ok?`<span class="ok">¡Correcto!</span>`:`<span class="ko">No es ese. Suma solo las posiciones con 1.</span>`};
+$("newq").onclick=newQ;
+$("pA").onclick=()=>{mode="A";$("pA").classList.add("p");$("pB").classList.remove("p");newQ()};
+$("pB").onclick=()=>{mode="B";$("pB").classList.add("p");$("pA").classList.remove("p");newQ()};
+let dv=[],sb=[],timed=false,tLeft=0,tScore=0,tFail=0,tBest=0,tId=null,sh=null;
+function drawPaper(){
+  if(!shown)return "";
+  let h="";
+  if(method=="div"){
+    const m=dv.length,k=Math.min(shown,m),n0=clampNum(),fin=k==m;
+    const c=(r,q,t,cl)=>`<span class="${cl||""}" style="grid-row:${r};grid-column:${q}">${t}</span>`;
+    h=c(1,1,n0,m==0?"fq":"");
+    for(let i=0;i<k;i++){const [,r,q]=dv[i];h+=c(i+1,i+2,2,"dv")+c(i+2,i+1,r,"rm")+c(i+2,i+2,q,i==m-1&&fin?"fq":"")}
+    h=`<div class="paper">${h}</div>`+(fin&&m?`<p>Se lee: el <span class="fq">último cociente</span> y después los <span class="rm">restos</span>, de abajo hacia arriba.</p>`:"");
+  }else{
+    const t=res.length,row=f=>Array.from({length:t},(_,j)=>f(j)).join("");
+    h=`<div style="overflow-x:auto"><table class="pw"><tr><th>Potencia</th>${row(j=>`<td class="h">${pow(t-1-j)}</td>`)}</tr><tr><th>Bit</th>${row(j=>`<td>${j<shown?res[j]:"&nbsp;"}</td>`)}</tr></table></div><div>`+sb.filter(s=>s[2]<shown).map(([n,v])=>`<div class="vs"><div>${n}</div><div>− ${v}</div><hr><div>${n-v}</div></div>`).join("")+`</div>`;
+  }
+  return `<h3 style="margin:.6em 0 0">Así lo harías en el papel</h3>`+h;
+}
+function pTab(){let r="";for(let i=0;i<=10;i++)r+=`<tr class="${i<N?"h":""}"><td>2<sup>${i}</sup></td><td>${Array(i).fill(2).join(" × ")||"1"}</td><td><b>${pow(i)}</b></td></tr>`;
+  $("ptab").innerHTML=`<table class="pw"><tr><th>Potencia</th><th>Multiplicación</th><th>Valor</th></tr>${r}</table><p>En azul, las posiciones que usas con ${N} bits.</p>`}
+function genSheet(){
+  const mx=pow(N)-1,pick=()=>{const s=new Set();while(s.size<Math.min(8,mx))s.add(1+Math.floor(Math.random()*mx));return [...s]};
+  sh={a:pick(),b:pick()};renderSheet()}
+function renderSheet(){
+  const L="abcdefgh",p=Array.from({length:N},(_,i)=>`<td class="h">${pow(N-1-i)}</td>`).join("");
+  let h=`<p>Nombre: ______________________ Grupo: ________ Fecha: ___________</p><h2>Binario y decimal</h2><p>Recuerda: cada posición vale el doble que la anterior y los ceros a la izquierda no se escriben.</p><table class="pw"><tr>${p}</tr></table>`;
+  h+=`<h3>A. Pasa a binario (método de la división o de la resta)</h3>`+sh.a.map((x,i)=>`<div class="ex">${L[i]}) ${x} = ____________ (binario)</div>`).join("");
+  h+=`<h3>B. Pasa a decimal</h3>`+sh.b.map((x,i)=>`<div class="ex">${L[i]}) ${x.toString(2)} = ____________ (decimal)</div>`).join("");
+  if($("sol").checked)h+=`<h3>Soluciones</h3><p>A) `+sh.a.map((x,i)=>L[i]+") "+x.toString(2)).join(" &nbsp; ")+`</p><p>B) `+sh.b.map((x,i)=>L[i]+") "+x).join(" &nbsp; ")+`</p>`;
+  $("sheet").innerHTML=h}
+$("gen").onclick=genSheet;$("sol").onchange=renderSheet;$("prt").onclick=()=>{try{print()}catch(e){}};
+function updClock(){$("clock").textContent=timed?`${tLeft} s · ${tScore} aciertos`:""}
+function endTimed(fin){clearInterval(tId);const s=tScore;timed=false;$("timeBtn").textContent="⏱ Contrarreloj 60 s";if(s>tBest)tBest=s;updClock();
+  $("fb").innerHTML=`<b>${fin?"¡Se acabó el tiempo!":"Parado."}</b> Aciertos: <span class="ok">${s}</span> · Fallos: ${tFail} · Mejor marca: ${tBest}`}
+$("timeBtn").onclick=()=>{if(timed){endTimed(false);return}
+  timed=true;tLeft=60;tScore=0;tFail=0;newQ();updClock();$("timeBtn").textContent="Parar";
+  tId=setInterval(()=>{tLeft--;updClock();if(tLeft<=0)endTimed(true)},1000)};
+$("ans").onkeydown=e=>{if(e.key==="Enter")$("chkB").click()};
+build();
+</script>
+</body>
+</html>
